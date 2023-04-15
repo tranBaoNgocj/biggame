@@ -1,22 +1,35 @@
-#include <bits/stdc++.h>
 #include "element.h"
 #include "run.h"
 #include <map>
+#include <ctime>
+#include <SDL.h>
 using namespace std;
 
-int main (){
-    srand(time(0));
-    //start Game
-    map <int,int> barrier = creatStartBarrier();
-    ball rapid(4,barrier[4]+1,barrier[4]);
-    printBarrier(barrier,rapid);
-    do{
-        // change ball position use player opinion
-            changeBallPosition(rapid,barrier);
-        //constant update new barrier and move up
-            printBarrier(nextBarrier(barrier),rapid);
-        
+bool init()
+{
+    if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
+		std::cout << "SDL_Init Error: " << SDL_GetError() << std::endl;
+		return false;
+	}
+    window = SDL_CreateWindow("started", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
+	render = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    if (window == NULL ||render == NULL){
+        cout<< SDL_GetError()<<endl;
     }
-    while(rapid.height >=0 && rapid.height<=8);
+    return true;
+}
+
+
+int main (int argc, char* args[]){
+    srand(time(0));
+    if(!init()) return -1;
+    game game;
+    bool isLegal = game.welcome();
+    if (!isLegal) {
+        game.quit();
+        return -1;
+    }
+    game.run();
+    game.quit();
     return 0;
 }

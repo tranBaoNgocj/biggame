@@ -1,73 +1,82 @@
-#include <iostream>
-#include <map>
-#include "element.h"
 #include "run.h"
-using namespace std;
 
-// Args:  
-//Return:  start barrier
-map <int,int> creatStartBarrier(){
-    map<int,int> lineBarrier;
-    for(int i=1;i<=8;i++){
-            int n = rand()%30;
-            lineBarrier.insert({i,n});
-    }
-    return lineBarrier;
-}
+    game::game()
+    {};
 
-//Args: information of barrier and ball
-//Result: print barrier and ball
-
-void printBarrier(map <int,int> barrier, ball rapid){
-    string firstLine(35,'-');
-    cout<<firstLine<<endl;
-    for(auto x:barrier){
-        if(x.first == rapid.height){
-            for(int i=0;i<35;i++){
-                if(i==rapid.currentBarrierPosition+1) cout<<"o";
-                else cout<<" ";
+    void game:: run()
+    {
+        bool isquit = false;
+        bool isStart = false;
+        ball ball(ballSize,{100,100});
+        barManager bars;
+        int last = SDL_GetTicks();
+        int cmd =0;
+        while (!isquit){
+            SDL_Event event;
+            while(SDL_PollEvent(&event)){
+                if(event.type == SDL_QUIT) isquit = true;
             }
-        cout<<endl;
+            const Uint8* keyStates = SDL_GetKeyboardState(NULL);
+            if (keyStates[SDL_SCANCODE_A]) cmd =1, isStart =true;
+            else if(keyStates[SDL_SCANCODE_D]) cmd =2, isStart =false;
+            else  cmd =0;
+            if (isStart) {
+                bars.move();
+                ball.update(bars, cmd);
+                bars.creatABoard(&last, SDL_GetTicks());
+            }
+            else last = SDL_GetTicks();
+            bars.draw();
+            ball.printBall();
+            SDL_RenderPresent(render);
         }
-        for(int i=0;i<35;i++){
-            if (i>x.second && i<x.second+4) cout<<"_";
-            else cout<<" ";
         }
-        cout<<endl;
-    }
-}
 
-//Args: current barrier
-// Return: barrier move up 1 step
-map <int,int> nextBarrier(map <int,int>& barrier){
-    int n= rand()%30;
-    for(int i=0; i<7;i++){
-        barrier[i] = barrier[i+1];
+    void game ::quit()
+    {
+        SDL_DestroyRenderer(render);
+        SDL_Quit();
     }
-    barrier[7]=n;
-    return barrier;
-}
 
-//Args:
-// Return: player choice
-int getPlayerChoice(){
-    char answer;
-    cin>>answer;
-    if(answer == 'a') return -1;
-    else if(answer == 'd') return 1;
-    return 0;
-}
-
-//Args: playerChoice
-// Return: change ball position
-ball changeBallPosition(ball& rapid, map<int,int> barrier){
-    rapid.position +=getPlayerChoice();
-    if(rapid.position< rapid.currentBarrierPosition || rapid.position> rapid.currentBarrierPosition+2) {
-        //ball down
-        rapid.height ++;
-        if(rapid.position < barrier[rapid.height] || rapid.position > barrier[rapid.height]+1) rapid.height ++;
+    bool welcome()
+    {
+        ball ball(100,{150,200});
+        bar bar({150,280},300);
+        bool isquit = false;
+        while (!isquit)
+        {
+            /* code */
+            SDL_Event event;
+            while(SDL_PollEvent(&event)){
+                if(event.type == SDL_QUIT) return false;
+            }
+            ball.printBall();
+            bar.draw();
+            SDL_RenderPresent(render);
+        }
+        return true;
+        
     }
-    else rapid.height--
-    ;
-    return rapid;
-}
+
+    void game:: drawTranigle(int st_, int edgePos_, bool flag_)
+    {
+        int detY = (flag_ == true) ? 1 : -1;
+        int st = st_, ed = st + tranigleSize;
+        while (st <= ed){
+            SDL_RenderDrawLine(render, st, edgePos_, ed, edgePos_);
+            SDL_RenderDrawLine(render, st, edgePos_ +1, ed, edgePos_ +1);
+            edgePos_ += detY * 2;
+            st++;
+            ed--;
+        }
+    }
+
+    void game:: drawFence()
+    {
+        int st = 0;
+        while (st < WIDTH) {
+            drawTranigle(st, up, true);
+            drawTranigle(st, down, false);
+            st += tranigleSize;
+        }
+    }
