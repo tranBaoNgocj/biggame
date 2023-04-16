@@ -1,35 +1,40 @@
 #include "element.h"
 #include "run.h"
-#include <map>
+#include "game.h"
+#include "gameInfor.h"
 #include <ctime>
 #include <SDL.h>
 using namespace std;
 
-bool init()
-{
-    if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
-		std::cout << "SDL_Init Error: " << SDL_GetError() << std::endl;
-		return false;
-	}
-    window = SDL_CreateWindow("started", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
-	render = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-    if (window == NULL ||render == NULL){
-        cout<< SDL_GetError()<<endl;
-    }
-    return true;
-}
+extern SDL_Renderer *render;
+extern SDL_Window *window;	
 
+
+    Uint32 framStart;
+    int frameTime;
+
+    Game *game = nullptr;
 
 int main (int argc, char* args[]){
     srand(time(0));
-    if(!init()) return -1;
-    game game;
-    bool isLegal = game.welcome();
-    if (!isLegal) {
-        game.quit();
-        return -1;
+
+    // init screen
+    game->init("startGame",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,800,400,false);
+    
+    // running game
+    while(game->running()){
+        game->handleEvents();
+        game->update();
+        game->render();
+        
+        // delay 
+        frameTime = SDL_GetTicks()-framStart;
+        if(frameDelay> frameTime){
+            SDL_Delay(frameDelay - frameTime);
+        }
     }
-    game.run();
-    game.quit();
+
+    // end game
+    game->clean();
     return 0;
 }
