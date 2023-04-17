@@ -23,10 +23,11 @@ int main (int argc, char* args[]){
     
     // running game
     while(game->running()){
+        
         game->handleEvents();
         game->update();
         game->render();
-        
+
         // delay 
         frameTime = SDL_GetTicks()-framStart;
         if(frameDelay> frameTime){

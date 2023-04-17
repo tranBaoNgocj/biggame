@@ -1,17 +1,42 @@
 #include "element.h"
-    
+
+// extern SDL_Renderer *gRender;
+// extern SDL_Window *gwindow;	
+
+ // --------------barr -----------------
+    bar::bar(const char* textureSheet, SDL_Renderer* ren,int y){
+        xpos = rand()%35;
+        ypos = y;
+        renderer = ren;
+        objectTexture = textureManager::LoadTexture(textureSheet,ren);
+    }
+
+    void bar::update()
+    {
+        ypos -=1000/FPS;
+
+        srcRect.x = xpos;
+        srcRect.y = ypos;
+        srcRect.w = BARWIDTH;
+        srcRect.h = BARHEIGHT;
+    }
+    void bar::Render(){
+	    SDL_RenderFillRect(renderer, &srcRect);
+    }
 
     // -------------------ball --------------------- 
     //creat ball
-    ball::ball(int size_,SDL_Point pos_){
-       pos = pos_;
-       size = size_;
+    ball::ball(const char* textureSheet, SDL_Renderer* ren,int x, int y){
+       renderer = ren;
+       objectTextue = textureManager::LoadTexture(textureSheet,ren);
+       xpos = x;
+       ypos = y;
     }
 
-    bool ball::ballOut(bar & bar_)
+    bool ball::ballOut(bar &bar_)
     {
-    if ((pos.y == bar_.pos.y) &&  //   o--- like this
-		(pos.x <= bar_.pos.x + bar_.width / 2 && pos.x >= bar_.pos.x - bar_.width / 2)) { //--o-- like this
+    if ((ypos == bar_.ypos) &&  //   o--- like this
+		(xpos <= bar_.xpos + BARWIDTH / 2 && xpos >= bar_.xpos - BARWIDTH / 2)) { //--o-- like this
 		return true;
 	}
 	return false;
@@ -19,62 +44,54 @@
     
 
     //update position and height
-    void ball::update(barManager &bars_,int type){
+    void ball::move(barManager &bars_,int type){
+
         //position of ball
-    if (type == 1) pos.x -= 1000 / FPS;
-	else if (type == 2) pos.x +=  1000 / FPS;
+        if (type == 1) xpos -= 1000 / FPS;
+	    else if (type == 2) xpos +=  1000 / FPS;
+
+
         for(int i =0; i< bars_.bars.size();i++){
             if(ballOut(bars_.bars[i])){
-                // if(!game::isBump){
-                //     game::isBump = true;
-                // }
-                pos.y = bars_.bars[i].pos.y;
+
+                // IF ball still in bar
+                ypos = bars_.bars[i].ypos;
                 return;
             }
         }
-        //update ball height
-        pos.y += 1000/FPS;
-        if(pos.y >= HEIGHT || pos.y <= 0){
-            gameRun == false;
-        }
+
+        //else 
+        ypos += 1000/FPS;
     }
 
 
     // temp graphic
-    void ball::printBall(SDL_Color color = {0,0,0,0xff}){
-        SDL_SetRenderDrawColor(render,color.r,color.g,color.b,color.a);
-        int posX = pos.x;
-        int posY = pos.y;
-        SDL_Rect rects[3];
-        rects[0] = { posX -30/ 2,posY-30/ 6,30,10 };
-	    rects[1] = { posX -30/ 6,posY-30/ 2,10,30 };
-	    rects[2] = { posX-30 / 3,posY-30/ 3,2 * 30 / 3,2 * 10 / 3 };
-        SDL_RenderFillRects(render,rects, 3);
+    void ball::Render(){
+        SDL_RenderCopy(renderer, objectTextue, &srcRect, &desRect);
     }
 
     // 
 
-    // --------------barr -----------------
-    bar::bar( SDL_Point pos_, int width_){
-        pos = pos_;
-        width = width_;
-    }
+   
 
-    void bar::draw()
-    {
-        SDL_Rect _bar;
-        _bar.x = pos.x - width/2;
-        _bar.y = pos.y;
-        _bar.w = width;
-        _bar.h = 10;
-	    SDL_RenderFillRect(render, &_bar);
-    }
+//-----------------Manager--------------------
+        barManager::barManager()
+        {
+            int GAP = 100;
+        };
 
-    void bar:: move(){
-        pos.x += 1000/FPS;
-       }
+        void barManager::creatStartBar(const char* textureSheet, SDL_Renderer* ren)
+        {
+            for(int i = HEIGHT; i>= STARTPOSITION; i-= BARHEIGHT){
+                int n = rand()%3;
+                if(n){
+                    bar x(textureSheet,ren,i);
+                    bars.push_back(x);
+                }
+            }
 
-// -----------------Manager--------------------
+        }
+
         //erase bar out of scene
     void barManager::clearInlegal()
     {
@@ -85,34 +102,36 @@
 
     bool barManager::isOut( bar &bar_)
     {
-        if (bar_.pos.y <= 12) return true;
+        if (bar_.ypos <= 12) return true;
 	    return false;
     }
 
     void barManager::move()
     {
         for (int i = 0; i < bars.size(); i++) {
-		bars[i].move();
+		bars[i].update();
 	}
     }
 
     void barManager::draw()
     {
         for (int i = 0; i < bars.size(); i++) {
-		bars[i].draw();
+		bars[i].Render();
 	}
     }
 
-    void barManager::creatABoard(int* last, int now)
+    void barManager::creatABoard(const char* textureSheet, SDL_Renderer* ren)
     {
         clearInlegal();
-	int gap = now - *last;
-	if (gap >= GAP - 1000 / FPS * 2 && gap <= GAP + 1000 / FPS * 2) {
-		srand(now);
-		int st = rand() % WIDTH;
-		GAP = rand() % 300 + 250;
-		*last = now;
+	    // int gap = now - *last;
+	    // if (gap >= GAP - 1000 / FPS * 2 && gap <= GAP + 1000 / FPS * 2) {
+		// int st = rand() % WIDTH;
+		// GAP = rand() % 300 + 250;
+		// *last = now;
+        int n = rand()% 3;
+        if( n ){
+            bar x(textureSheet,ren,280);
+            bars.push_back(x);
+        }
 	}
-    }
-
 

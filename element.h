@@ -1,54 +1,47 @@
 #ifndef ELEMENT_H
 #define ELEMENT_H
-#include <iostream>
-#include <vector>
-#include <SDL.h>
 
-using std::cout;
-using std::endl;
-using std::vector;
-
-SDL_Renderer *render;
-SDL_Window *window;	
-
-bool gameRun = true;
-
-const int HEIGHT = 600;
-const int WIDTH = 300;
-const int FPS = 60;
-
-
-class ball{
-    public:
-        ball(int size_,SDL_Point pos_);
-        void printBall(SDL_Color color = {0,0,0,0xff});
-        bool ballOut(bar &bar_);
-        void update(barManager &bars_,int type);
-
-    private:
-        SDL_Point pos;
-        int size;
-};
+#include "gameInfor.h"
 
 class bar {
     public:
-        friend barManager;
-        friend ball;
-        bar( SDL_Point pos_,int width_);
-        virtual void draw();
-        void move();
+        friend class ball;
+        friend class barManager;
+        bar(const char* textureSheet, SDL_Renderer* ren,int y);
+        void update();
+        void Render();
     private:
-        SDL_Point pos;
-        int width = 60;
+        
+        int xpos;
+        int ypos;
+        SDL_Texture* objectTexture;
+        SDL_Rect srcRect,desRect;
+        SDL_Renderer* renderer;
+};
+
+class ball{
+    public:
+        ball(const char* textureSheet, SDL_Renderer* ren,int x, int y);
+        void move(barManager &bars_,int type);
+        void Render();
+
+        bool ballOut(bar &bar_);
+    private:
+        int xpos;
+        int ypos;
+        SDL_Rect srcRect, desRect;
+        SDL_Texture* objectTextue;
+        SDL_Renderer* renderer;
 };
 
 class barManager{
     public:
-        friend ball;
+        friend class ball;
         barManager();
         void move();
         void draw();
-        void creatABoard(int* last, int now);
+        void creatABoard(const char* textureSheet, SDL_Renderer* ren);
+        void creatStartBar(const char* textureSheet, SDL_Renderer* ren);
     private:
         vector <bar> bars;
         void clearInlegal();
