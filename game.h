@@ -2,23 +2,23 @@
 
 #include <SDL.h>
 #include <SDL_image.h>
-// #include <gameInfor.h>
-#include <element.h>
 #include <iostream>
+#include "Ball.h"
+// #include "Board.h"
 
-class Game{
+class Game {
+    private:
+        bool isRunning;
+        bool isStarted;
+        SDL_Window *window;
+        SDL_Renderer *renderer;
     public:
         Game();
-        void init (const char*title, int xpos, int ypos, int width, int height,bool fullscreen);
+        void init (const char* title, int xpos, int ypos, int width,int height, bool fullscreen);
         void handleEvents();
         void update();
         void render();
         void clean();
-
-        bool running(){return isRunning;};
-    private:
         int cnt;
-        bool isRunning;
-        // SDL_Window *window;
-        // SDL_Renderer *renderer;
+        bool running(){return isRunning;};
 };

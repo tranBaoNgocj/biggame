@@ -1,100 +1,104 @@
 #include "game.h"
-#include "run.h"
-
-ball* balls;
-barManager* bars;
 
 Game::Game()
 {}
+ball* balls;
+vector <board> barManager;
 
-void Game::init(const char*title, int xpos, int ypos, int width, int height,bool fullscreen)
+void Game::init(const char* title, int xpos, int ypos, int width, int height, bool fullscreen)
 {
-    int flags =0;
-        //full screen
-        if(fullscreen){
-            flags =SDL_WINDOW_FULLSCREEN;
+    int flags = 0;
+    if(fullscreen){
+        flags = SDL_WINDOW_FULLSCREEN;
+    }
+
+    // sdl init
+    if( SDL_Init(SDL_INIT_VIDEO) ==0 )
+    {
+        std::cout <<"SDL initialize"<< std:: endl;
+
+        // creat window
+        window = SDL_CreateWindow(title, xpos, ypos, width, height, flags);
+        if( window )
+        {
+            std::cout<<" Window be created"<< std::endl;
         }
 
-        // initialize sdl
-        if( SDL_Init( SDL_INIT_VIDEO ) == 0 )
-	    {
-		std::cout<< "SDL initialize"<<std::endl ;
-
-        //window
-		gWindow = SDL_CreateWindow( title, xpos, ypos, width, height, flags );
-        if( gWindow )
-		{
-			std::cout<< "Window be created"<<std::endl;
-		}
-
-        //render
-        gRenderer = SDL_CreateRenderer(gWindow,-1,0);
-        if(gRenderer){
-			std::cout<< "renderer be created"<<std::endl;
-            SDL_SetRenderDrawColor(gRenderer,255,255,255,255);
+        //creat renderer
+        renderer = SDL_CreateRenderer(window,-1,0);
+        if( renderer )
+        {
+            std::cout<<"renderer be created"<<std::endl;
+            SDL_SetRenderDrawColor(renderer,255,255,255,255);
         }
-        isRunning = true;
-	    }
-        balls = new ball("draw/ball.png",gRenderer,55, STARTPOSITION + 15);
-        bars = new barManager();
-        bars->creatStartBar("draw/barrier.png",gRenderer);
+    }
+
+    
+    isRunning = true;
+    balls = new ball(renderer,5,5);
+    // boards = new board(renderer,5,300);
+    CreatStartBar (barManager,renderer);
+    isStarted = false;
 }
-
 
 void Game::handleEvents()
 {
     SDL_Event event;
-        SDL_PollEvent(&event);
-        switch (event.type)
-        {
+    SDL_PollEvent(&event);
+    switch (event.type)
+    {
         case SDL_QUIT:
-            isRunning =false;
+        isRunning = false;
+        case SDL_KEYDOWN:
+            switch (event.key.keysym.sym)
+            {
+            case SDLK_RIGHT:
+            isStarted = true;
+                cnt =1;
+                break;
+            case SDLK_LEFT:
+            isStarted = true;
+                cnt = -1;
+                break;
+            default:
+                // std::cout<< 3;
+                break;
+            }
             break;
         default:
+            cnt =0;
             break;
-        }
+    }
+    // std::cout<< std::endl<<cnt<<std::endl;
 }
-
 void Game::update()
 {
-    // gameRun();
-    bool isStart = false;
-    int last = SDL_GetTicks();
-    int cmd =0;
-    const Uint8* keyStates = SDL_GetKeyboardState(NULL);
-            if (keyStates[SDL_SCANCODE_A]) cmd =1, isStart =true;
-            else if(keyStates[SDL_SCANCODE_D]) cmd =2, isStart =false;
-            else  cmd =0;
-             if (isStart) {
-                bars->move();
-                // void move(barManager &bars_,int type)
-                // bars.creatABoard(&last, SDL_GetTicks());
-                bars->creatABoard("draw/barrier.png",gRenderer);
-             }
-            else last = SDL_GetTicks();
-           
+    if(isStarted){
+    balls->Update(barManager,cnt);
+    // boards->Update();
+    UpDate(barManager);
+    CreatABoard(barManager,renderer);
+    }
 }
 
 void Game::render()
 {
-    bars->draw();
+    SDL_RenderClear(renderer);
+
     balls->Render();
-    SDL_RenderPresent(gRenderer);
+    RenDer(barManager);
+
+    SDL_RenderPresent(renderer);
 }
 
 void Game::clean()
 {
-    // Free loaded image
-	SDL_DestroyTexture(gTexture);
-	gTexture = NULL;
 
-	//Destroy window	
-	SDL_DestroyRenderer( gRenderer );
-	SDL_DestroyWindow( gWindow );
-	gRenderer = NULL;
-	gRenderer = NULL;
+    // clean window
+    SDL_DestroyWindow(window);
 
-	//Quit SDL subsystems
-	IMG_Quit();
-	SDL_Quit();
+    //quit screen
+    SDL_Quit();
+
+    std::cout<< "game clean"<<std::endl;
 }
