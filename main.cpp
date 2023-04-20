@@ -23,8 +23,6 @@ int main(int argv, char* args[] ){
         if(frameDelay> frameTime){
             SDL_Delay(frameDelay - frameTime);
         }
-        // cout<< 1<<endl;
-        //SDL_Delay(50000);
     }
     game->clean();
     return 0;

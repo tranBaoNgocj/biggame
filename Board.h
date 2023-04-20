@@ -20,5 +20,6 @@ class board{
 
 void CreatStartBar (vector <board> &boardManager, SDL_Renderer* ren);
 void CreatABoard (vector <board> &boardManager,SDL_Renderer* ren);
+void ClearIlegal (vector <board> &boardManager);
 void UpDate(vector <board> &boardManager);
 void RenDer(vector <board> boardManager);

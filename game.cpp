@@ -61,7 +61,6 @@ void Game::handleEvents()
                 cnt = -1;
                 break;
             default:
-                // std::cout<< 3;
                 break;
             }
             break;
@@ -69,24 +68,23 @@ void Game::handleEvents()
             cnt =0;
             break;
     }
-    // std::cout<< std::endl<<cnt<<std::endl;
 }
 void Game::update()
 {
     if(isStarted){
-    balls->Update(barManager,cnt);
-    // boards->Update();
-    UpDate(barManager);
-    CreatABoard(barManager,renderer);
+        UpDate(barManager);
+        balls->Update(barManager,cnt);
+        CreatABoard(barManager,renderer);
     }
+    if(!balls->isRunning()) isRunning = false;
 }
 
 void Game::render()
 {
     SDL_RenderClear(renderer);
 
-    balls->Render();
     RenDer(barManager);
+    balls->Render();
 
     SDL_RenderPresent(renderer);
 }

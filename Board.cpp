@@ -1,5 +1,6 @@
 #include "Board.h"
 
+using namespace std;
 board::board(SDL_Renderer* ren,int x, int y)
 {
     renderer = ren;
@@ -12,15 +13,15 @@ board::board(SDL_Renderer* ren,int x, int y)
 void board::Update()
 {
         ypos -- ;
-        srcRect.h = 64;
-        srcRect.w = 64;
+        srcRect.h = BOARD_HEIGHT;
+        srcRect.w = BOARD_WIDTH;
         srcRect.x = 0;
         srcRect.y = 0;
 
         desRect.x = xpos;
         desRect.y = ypos;
-        desRect.w = srcRect.w *2;
-        desRect.h = srcRect.h *2;
+        desRect.w = srcRect.w;
+        desRect.h = srcRect.h;
 }
 
 //draw board
@@ -35,9 +36,20 @@ void board::Render()
 
 bool board::OutScreen()
 {
-    if (ypos <= 12); return true;
+    if (ypos <= 12) return true;
     return false;
 }
+
+void ClearIlegal (vector <board> &boardManager)
+{
+    for (int i =  boardManager.size() - 1; i >=0 ; i--) {
+		if (boardManager[i].OutScreen()) {
+            boardManager.erase(boardManager.begin() + i);
+            return;
+        }
+	}
+}
+
 
 void CreatStartBar (vector <board> &boardManager,SDL_Renderer* ren)
 {
@@ -54,12 +66,14 @@ void CreatABoard (vector <board> &boardManager,SDL_Renderer* ren)
     int a = boardManager.size() ;
     int n = boardManager[a-1].ypos;
 
-    if(n+BOARD_WIDTH < BOARD_START_POSITION){
-            int a = rand()%(WIDTH-BOARD_WIDTH - 20);
-            board x(ren,a,BOARD_START_POSITION);
-            boardManager.push_back(x);
-        }
+    if(n+BOARD_WIDTH < BOARD_START_POSITION)
+    {
+        int a = rand()%(WIDTH-BOARD_WIDTH - 20);
+        board x(ren,a,BOARD_START_POSITION);
+        boardManager.push_back(x);
     }
+}
+    
 
 void UpDate(vector <board> &boardManager)
 {
@@ -69,6 +83,8 @@ void UpDate(vector <board> &boardManager)
         boardManager[i].Update();
         // std::cout<<i;
     }
+    ClearIlegal(boardManager);
+    // std::cout<<boardManager.size()<<std::endl;
 }
 
 void RenDer(vector <board> boardManager){

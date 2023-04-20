@@ -8,6 +8,7 @@ class ball{
         ball(SDL_Renderer* ren, int x, int y);
         void Update(vector <board> boardManager,int choice);
         void Render();
+        bool isRunning();
     private:
         int xpos;
         int ypos;
