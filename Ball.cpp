@@ -48,6 +48,6 @@ void ball::Render()
 }
 
 bool ball::isRunning(){
-    if(ypos>WIDTH) return false;
+    if(ypos>BOARD_START_POSITION +5 || ypos <=BOARD_END_POSITION) return false;
     return true;
 }

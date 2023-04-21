@@ -36,7 +36,7 @@ void board::Render()
 
 bool board::OutScreen()
 {
-    if (ypos <= 12) return true;
+    if (ypos <= BOARD_END_POSITION) return true;
     return false;
 }
 
@@ -53,11 +53,11 @@ void ClearIlegal (vector <board> &boardManager)
 
 void CreatStartBar (vector <board> &boardManager,SDL_Renderer* ren)
 {
-    for(int i= BOARD_START_POSITION; i> GAME_START_POSITION;i--){
-            int a = rand()%(WIDTH - BOARD_WIDTH-20);
+    for(int i= GAME_START_POSITION; i< BOARD_START_POSITION;i++){
+            int a = rand()%(WIDTH - BOARD_WIDTH);
             board x(ren,a,i);
             boardManager.push_back(x);
-            i-= BOARD_WIDTH;
+            i+= BOARD_WIDTH;
         }
     }
 // void CreatABoard (vector <board> boardManager,SDL_Renderer* ren);
