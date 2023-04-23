@@ -16,10 +16,12 @@ static const int BOARD_WIDTH = 64;
 static const int BOARD_HEIGHT = 7;
 static const int BALL_SIZE = 27;
 static const int BOARD_START_POSITION = 500;
-static const int BOARD_END_POSITION = 10;
+static const int BOARD_END_POSITION = 20;
 
 static const char* ballName = "draw/ball.png";
-static const char* boardName = "draw/barrier.png";
+static const char* safeBoardName = "draw/safeboard.png";
+static const char* dangerBoardName = "draw/dangerboard.png";
+static const char* backgroundName = "draw/background.png";
 static const char* fontPath = "draw/lazy.ttf";
 
 class textureManager {

@@ -13,14 +13,17 @@ void ball::ballInBoard(vector <board>  boardManager, int choice)
     xpos+=choice* 10;
     for(int i =0; i < (int)boardManager.size();i++)
     {
-        // cout<< i<< " ";
         if( (ypos + BALL_SIZE <= boardManager[i].ypos ) && 
             (ypos + BALL_SIZE >=boardManager[i].ypos - BOARD_HEIGHT/2) &&
             (xpos <= boardManager[i].xpos + BOARD_WIDTH - BALL_SIZE/2) && 
             (xpos>= boardManager[i].xpos - BALL_SIZE/2))
         {
-            ypos--;
+            // in save board
+            if(boardManager[i].kindOfBoard)        ypos--;
+            // in thorn board
+            else                                    ypos =0;
             return;
+
         }
     }
     ypos++;

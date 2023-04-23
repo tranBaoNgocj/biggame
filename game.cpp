@@ -5,6 +5,7 @@ Game::Game()
 ball* balls;
 vector <board> barManager;
 Ltexture  *gTextTexture;
+backGround *background;
 
 void Game::init(const char* title, int xpos, int ypos, int width, int height, bool fullscreen)
 {
@@ -33,12 +34,6 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
             SDL_SetRenderDrawColor(renderer,255,255,255,255);
         }
         
-        // //Set texture filtering to linear
-		// if( !SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "1" ) )
-		// {
-		// 	std::cout<<"Warning: Linear texture filtering not enabled!"<<std::endl;
-		// }
-        
         //Initialize PNG loading
         int imgFlags = IMG_INIT_PNG;
         if( (IMG_Init(imgFlags) & imgFlags ) )
@@ -60,6 +55,8 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
     isRunning = true;
     balls = new ball(renderer,WIDTH/2,GAME_START_POSITION-BALL_SIZE);
 
+    background = new backGround(backgroundName,renderer);
+
     gTextTexture = new Ltexture;
 
     CreatStartBar (barManager,renderer);
@@ -73,8 +70,11 @@ void Game::handleEvents()
     SDL_PollEvent(&event);
     switch (event.type)
     {
+        //close window
         case SDL_QUIT:
         isRunning = false;
+
+        //game run
         case SDL_KEYDOWN:
             switch (event.key.keysym.sym)
             {
@@ -90,6 +90,7 @@ void Game::handleEvents()
                 break;
             }
             break;
+
         default:
             cnt =0;
             break;
@@ -108,6 +109,7 @@ void Game::render()
 {
     SDL_RenderClear(renderer);
 
+    background->render();
     RenDer(barManager);
     balls->Render();
     

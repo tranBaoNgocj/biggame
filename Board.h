@@ -13,7 +13,7 @@ class board{
 // private:
         int xpos;
         int ypos;
-
+        int kindOfBoard;
         SDL_Texture* boardTexture;
         SDL_Rect srcRect, desRect;
 };

@@ -4,7 +4,11 @@ using namespace std;
 board::board(SDL_Renderer* ren,int x, int y)
 {
     renderer = ren;
-    boardTexture = textureManager::LoadTexture(boardName,ren);
+    kindOfBoard = rand()%5;
+    if(kindOfBoard)
+    boardTexture = textureManager::LoadTexture(safeBoardName,ren);
+    else
+    boardTexture = textureManager::LoadTexture(dangerBoardName,ren);
     xpos = x;
     ypos =y;
 }

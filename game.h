@@ -6,7 +6,7 @@
 #include <iostream>
 #include "Ball.h"
 #include "LTexture.h"
-// #include "Board.h"
+#include "background.h"
 
 class Game {
     private:
