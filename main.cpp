@@ -11,7 +11,7 @@ int main(int argv, char* args[] ){
     game = new Game();
     game->init("startGame",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,WIDTH,HEIGHT,false);
 
-    while(game->running()){
+    while(!game->running()){
         
         framStart = SDL_GetTicks();
 

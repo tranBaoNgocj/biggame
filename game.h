@@ -7,10 +7,11 @@
 #include "Ball.h"
 #include "LTexture.h"
 #include "background.h"
+#include "Button.h"
 
 class Game {
     private:
-        bool isRunning;
+        bool isQuit;
         bool isStarted;
         SDL_Window *window;
         SDL_Renderer *renderer;
@@ -23,5 +24,5 @@ class Game {
         void render();
         void clean();
         int cnt;
-        bool running(){return isRunning;};
+        bool running(){return isQuit;};
 };

@@ -6,6 +6,8 @@ ball* balls;
 vector <board> barManager;
 Ltexture  *gTextTexture;
 backGround *background;
+button *playButton;
+// button *rePlayButton;
 
 void Game::init(const char* title, int xpos, int ypos, int width, int height, bool fullscreen)
 {
@@ -52,10 +54,13 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
     }
 
     
-    isRunning = true;
+    isQuit = false;
     balls = new ball(renderer,WIDTH/2,GAME_START_POSITION-BALL_SIZE);
 
     background = new backGround(backgroundName,renderer);
+
+    playButton = new button(renderer, "draw/Play.png", 150, 350);
+    // rePlayButton = new button(renderer, "draw/RePlay.png", 100,100);
 
     gTextTexture = new Ltexture;
 
@@ -72,28 +77,30 @@ void Game::handleEvents()
     {
         //close window
         case SDL_QUIT:
-        isRunning = false;
+            isQuit = true;
 
         //game run
         case SDL_KEYDOWN:
             switch (event.key.keysym.sym)
             {
-            case SDLK_RIGHT:
-            isStarted = true;
-                cnt =1;
-                break;
-            case SDLK_LEFT:
-            isStarted = true;
-                cnt = -1;
-                break;
-            default:
-                break;
+                case SDLK_RIGHT:
+                isStarted = true;
+                    cnt =1;
+                    break;
+                case SDLK_LEFT:
+                isStarted = true;
+                    cnt = -1;
+                    break;
+                default:
+                    break;
             }
             break;
-
         default:
-            cnt =0;
-            break;
+                playButton->HandleMouseEvent(&event);
+                if(playButton->mCurrentSprite == BUTTON_SPRITE_MOUSE_DOWN) 
+                    isStarted = true;
+                cnt = 0;
+                break;
     }
 }
 void Game::update()
@@ -103,49 +110,46 @@ void Game::update()
         balls->Update(barManager,cnt);
         CreatABoard(barManager,renderer);
     }
+    if(!balls->isRunning())
+    {
+        isStarted = false;
+    }
 }
 
 void Game::render()
 {
     SDL_RenderClear(renderer);
-
-    background->render();
-    RenDer(barManager);
-    balls->Render();
     
+    if(isStarted)
+    {
+        SDL_RenderClear(renderer);
+        background->render();
+        RenDer(barManager);
+        balls->Render();
+    }
+
     if(!isStarted)
     {
         SDL_Color textColor = { 0, 0, 0 };
-        // gTextTexture->loadFromRenderedText(renderer,font,"Game Over!", textColor);
+        SDL_SetRenderDrawColor( renderer, 0xFF, 0xFF, 0xFF, 0xFF );
+        SDL_RenderClear( renderer );
+        if( !gTextTexture->loadFromRenderedText(renderer,font,"Rapid RoLL",textColor))
+        {
+            std::cout<< "Failed to render text texture!\n"<<std::endl;
+        }
+        //Render current frame
 
-        //Clear screen
-				SDL_SetRenderDrawColor( renderer, 0xFF, 0xFF, 0xFF, 0xFF );
-				SDL_RenderClear( renderer );
-                if( !gTextTexture->loadFromRenderedText(renderer,font,"<-  or  ->",textColor))
-		        {
-			        std::cout<< "Failed to render text texture!\n"<<std::endl;
-		        }
-				//Render current frame
-				gTextTexture->render( (WIDTH) / 4, ( HEIGHT ) / 2 ,renderer);
 
+        background->render();
+        gTextTexture->render( 25, 200,renderer);
+        playButton->Render();
     }
 
-    if(!balls->isRunning())
-    {
-        SDL_Color textColor = { 0, 0, 0 };
-        // gTextTexture->loadFromRenderedText(renderer,font,"Game Over!", textColor);
-
-        //Clear screen
-				SDL_SetRenderDrawColor( renderer, 0xFF, 0xFF, 0xFF, 0xFF );
-				SDL_RenderClear( renderer );
-                if( !gTextTexture->loadFromRenderedText(renderer,font,"Game Over !",textColor))
-		        {
-			        std::cout<< "Failed to render text texture!\n"<<std::endl;
-		        }
-				//Render current frame
-				gTextTexture->render( (WIDTH) / 4, ( HEIGHT ) / 2 ,renderer);
-                isStarted = false;
-    }
+    // if(!balls->isRunning())
+    // {
+    //     SDL_RenderClear (renderer);
+    //     rePlayButton->Render();
+    // }
 
     SDL_RenderPresent(renderer);
 }

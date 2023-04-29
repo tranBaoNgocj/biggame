@@ -14,9 +14,9 @@ void backGround::render()
     srcRect.y =0;
 
     desRect.x = 0;
-    desRect.y = 20;
+    desRect.y = 0;
     desRect.h = HEIGHT;
-    desRect.w =WIDTH;
+    desRect.w = WIDTH;
 
     SDL_RenderCopy(renderer, backGroundTexture, &srcRect, &desRect);
 }
