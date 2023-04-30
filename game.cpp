@@ -191,7 +191,15 @@ void Game::clean()
     TTF_CloseFont( font );
     TTF_Quit();
 	Mix_FreeMusic( gMusic );
+    window = NULL;
+    renderer = NULL;
 	gMusic = NULL;
+
+    delete balls;
+    delete background;
+
+    balls = NULL;
+    background = NULL;
 
     //quit screen
     SDL_Quit();
