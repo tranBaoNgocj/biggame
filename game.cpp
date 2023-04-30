@@ -7,7 +7,8 @@ vector <board> barManager;
 Ltexture  *gTextTexture;
 backGround *background;
 button *playButton;
-// button *rePlayButton;
+//The music that will be played
+Mix_Music *gMusic = NULL;
 
 void Game::init(const char* title, int xpos, int ypos, int width, int height, bool fullscreen)
 {
@@ -22,34 +23,40 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
         std::cout <<"SDL initialize"<< std:: endl;
 
         // creat window
-        window = SDL_CreateWindow(title, xpos, ypos, width, height, flags);
-        if( window )
-        {
-            std::cout<<" Window be created"<< std::endl;
-        }
+            window = SDL_CreateWindow(title, xpos, ypos, width, height, flags);
+            if( window )
+            {
+                std::cout<<" Window be created"<< std::endl;
+            }
 
         //creat renderer
-        renderer = SDL_CreateRenderer(window,-1,0);
-        if( renderer )
-        {
-            std::cout<<"renderer be created"<<std::endl;
-            SDL_SetRenderDrawColor(renderer,255,255,255,255);
-        }
+            renderer = SDL_CreateRenderer(window,-1,0);
+            if( renderer )
+            {
+                std::cout<<"renderer be created"<<std::endl;
+                SDL_SetRenderDrawColor(renderer,255,255,255,255);
+            }
         
         //Initialize PNG loading
-        int imgFlags = IMG_INIT_PNG;
-        if( (IMG_Init(imgFlags) & imgFlags ) )
-        {
-            std::cout<<"sdl_image be initialized!"<<std::endl;
-        }
+            int imgFlags = IMG_INIT_PNG;
+            if( (IMG_Init(imgFlags) & imgFlags ) )
+            {
+                std::cout<<"sdl_image be initialized!"<<std::endl;
+            }
 
         // //Initialize SDL-ttf
-        if( TTF_Init() == -1) std::cout<< "sdl_ttf could not be creat";
-        font = TTF_OpenFont(fontPath,50);
-        if( font )
-        {
-            std::cout<<"game over ok!"<<std::endl;
-        }
+            if( TTF_Init() == -1) std::cout<< "sdl_ttf could not be creat";
+            font = TTF_OpenFont(fontPath,50);
+            if( font )
+            {
+                std::cout<<"game over ok!"<<std::endl;
+            }
+
+         //Initialize SDL_mixer
+				if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0 )
+				{
+					std::cout<< "SDL_mixer could not initialize!"<<std::endl;
+				}
         
     }
 
@@ -63,6 +70,13 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
     // rePlayButton = new button(renderer, "draw/RePlay.png", 100,100);
 
     gTextTexture = new Ltexture;
+
+    //Load music
+	gMusic = Mix_LoadMUS( "draw/music2.mp3" );
+	if( gMusic == NULL )
+	{
+		std::cout<< "Failed to load beat music!"<<std::endl;
+	}
 
     CreatStartBar (barManager,renderer);
 
@@ -103,9 +117,18 @@ void Game::handleEvents()
                 break;
     }
 }
+
+
 void Game::update()
 {
-    if(isStarted){
+    if( Mix_PlayingMusic() == 0 )
+        {
+            //Play the music
+            Mix_PlayMusic( gMusic, -1 );
+        }
+
+    if(isStarted)
+    {
         UpDate(barManager);
         balls->Update(barManager,cnt);
         CreatABoard(barManager,renderer);
@@ -113,6 +136,12 @@ void Game::update()
     if(!balls->isRunning())
     {
         isStarted = false;
+        //clear game
+        barManager.clear();
+        balls = NULL;
+
+        balls = new ball(renderer,WIDTH/2,GAME_START_POSITION-BALL_SIZE);
+        CreatStartBar(barManager,renderer);
     }
 }
 
@@ -157,13 +186,12 @@ void Game::render()
 void Game::clean()
 {
 
-    // clean window
+    // clean sdl
     SDL_DestroyWindow(window);
-
-
     TTF_CloseFont( font );
     TTF_Quit();
-
+	Mix_FreeMusic( gMusic );
+	gMusic = NULL;
 
     //quit screen
     SDL_Quit();
