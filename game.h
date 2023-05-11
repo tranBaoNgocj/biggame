@@ -24,5 +24,7 @@ class Game {
         void render();
         void clean();
         int cnt;
+        float FPS = 60;
+        long long score =0;
         bool running(){return isQuit;};
 };

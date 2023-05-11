@@ -72,7 +72,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
     gTextTexture = new Ltexture;
 
     //Load music
-	gMusic = Mix_LoadMUS( "draw/music2.mp3" );
+	gMusic = Mix_LoadMUS( music );
 	if( gMusic == NULL )
 	{
 		std::cout<< "Failed to load beat music!"<<std::endl;
@@ -98,11 +98,9 @@ void Game::handleEvents()
             switch (event.key.keysym.sym)
             {
                 case SDLK_RIGHT:
-                isStarted = true;
                     cnt =1;
                     break;
                 case SDLK_LEFT:
-                isStarted = true;
                     cnt = -1;
                     break;
                 default:
@@ -132,6 +130,9 @@ void Game::update()
         UpDate(barManager);
         balls->Update(barManager,cnt);
         CreatABoard(barManager,renderer);
+
+        FPS+=0.01;
+        score +=FPS/10;
     }
     if(!balls->isRunning())
     {
@@ -140,13 +141,18 @@ void Game::update()
         barManager.clear();
         balls = NULL;
 
+        // reset game
         balls = new ball(renderer,WIDTH/2,GAME_START_POSITION-BALL_SIZE);
+        playButton = new button(renderer, "draw/Replay.png", 150, 350);
         CreatStartBar(barManager,renderer);
+        FPS = 60;
+        score =0;
     }
 }
 
 void Game::render()
 {
+    SDL_Color textColor = { 0, 0, 0 };
     SDL_RenderClear(renderer);
     
     if(isStarted)
@@ -155,11 +161,17 @@ void Game::render()
         background->render();
         RenDer(barManager);
         balls->Render();
+
+        std::string s = "score: " + std::to_string(score/50);
+        if( !gTextTexture->loadFromRenderedText(renderer,font,s,textColor))
+        {
+            std::cout<< "Failed to render text texture!\n"<<std::endl;
+        }
+        gTextTexture->render(250,25,renderer,150,30);
     }
 
     if(!isStarted)
     {
-        SDL_Color textColor = { 0, 0, 0 };
         SDL_SetRenderDrawColor( renderer, 0xFF, 0xFF, 0xFF, 0xFF );
         SDL_RenderClear( renderer );
         if( !gTextTexture->loadFromRenderedText(renderer,font,"Rapid RoLL",textColor))

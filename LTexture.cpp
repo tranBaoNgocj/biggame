@@ -118,9 +118,13 @@ void Ltexture::setAlpha( Uint8 alpha )
 }
 
 
-void Ltexture::render( int x, int y,SDL_Renderer* gRenderer, SDL_Rect* clip, double angle , SDL_Point* center, SDL_RendererFlip flip)
+void Ltexture::render( int x, int y,SDL_Renderer* gRenderer,int width, int height, SDL_Rect* clip, double angle , SDL_Point* center, SDL_RendererFlip flip)
 {
     //Set rendering space and render to screen
+    if(width && height){
+        mWidth = width;
+        mHeight = height;
+    }
 	SDL_Rect renderQuad = { x, y, mWidth, mHeight };
 
 	//Set clip rendering dimensions

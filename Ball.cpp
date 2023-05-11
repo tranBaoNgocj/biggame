@@ -32,15 +32,15 @@ void ball::ballInBoard(vector <board>  boardManager, int choice)
 void ball::Update (vector <board> boardManager,int choice)
 {
         ballInBoard(boardManager,choice);
-        srcRect.h = BALL_SIZE;
-        srcRect.w =BALL_SIZE;
+        srcRect.h = 100;
+        srcRect.w =100;
         srcRect.x = 0;
         srcRect.y = 0;
 
         desRect.x = xpos;
         desRect.y = ypos;
-        desRect.w = srcRect.w;
-        desRect.h = srcRect.h;
+        desRect.w = BALL_SIZE;
+        desRect.h = BALL_SIZE;
 }
 
 void ball::Render()
