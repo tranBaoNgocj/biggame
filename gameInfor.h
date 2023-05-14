@@ -10,16 +10,21 @@
 
 static const int HEIGHT = 700;
 static const int WIDTH = 400;
-static const int GAME_START_POSITION = 200;
 static const int BOARD_WIDTH = 64;
 static const int BOARD_HEIGHT = 7;
-static const int BALL_SIZE = 27;
-static const int BOARD_START_POSITION = 650;
-static const int BOARD_END_POSITION = 55;
+static const int BALL_SIZE = 20;
 static const int BUTTON_SIZE = 72;
+static const int SCORE_HEIGHT = 30;
+static const int SCORE_WIDTH = 150;
+static const int thornSixe = 10;
 
-static const char* ballName = "draw/ball2.png";
-static const char* safeBoardName = "draw/safeboard.png";
+static const int GAME_START_POSITION = 200;
+static const int BOARD_START_POSITION = 650;
+static const int BOARD_END_POSITION = 50;
+static const int SCORE_HEIGHT_POSITION = 10;
+
+static const char* ballName = "draw/ball6.png";
+static const char* safeBoardName = "draw/board2.png";
 static const char* dangerBoardName = "draw/dangerboard.png";
 static const char* backgroundName = "draw/background.jpg";
 static const char* music = "draw/music.mp3";

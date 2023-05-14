@@ -2,16 +2,12 @@
 #include "gameInfor.h"
 using namespace std;
 
-// static const int FPS = 60;
-// static const int frameDelay = 1000/FPS;
-
     Uint32 framStart;
     int frameTime;
 
 Game *game = nullptr;
 
 int main(int argv, char* args[] ){
-    // float FPS = 60;
     int frameDelay;
     game = new Game();
     game->init("startGame",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,WIDTH,HEIGHT,false);
@@ -24,9 +20,7 @@ int main(int argv, char* args[] ){
         game->update();
         game->render();
 
-        // FPS +=0.02;
         frameDelay = 1000/game->FPS;
-        // std::cout<<FPS<<" ";
 
         frameTime = SDL_GetTicks()-framStart;
         if(frameDelay> frameTime){

@@ -159,6 +159,7 @@ void Game::render()
     {
         SDL_RenderClear(renderer);
         background->render();
+        background->drawFence();
         RenDer(barManager);
         balls->Render();
 
@@ -167,7 +168,7 @@ void Game::render()
         {
             std::cout<< "Failed to render text texture!\n"<<std::endl;
         }
-        gTextTexture->render(250,25,renderer,150,30);
+        gTextTexture->render(250,SCORE_HEIGHT_POSITION,renderer,SCORE_WIDTH,SCORE_HEIGHT);
     }
 
     if(!isStarted)

@@ -32,8 +32,8 @@ void ball::ballInBoard(vector <board>  boardManager, int choice)
 void ball::Update (vector <board> boardManager,int choice)
 {
         ballInBoard(boardManager,choice);
-        srcRect.h = 100;
-        srcRect.w =100;
+        srcRect.h = 374;
+        srcRect.w =374;
         srcRect.x = 0;
         srcRect.y = 0;
 

@@ -1,14 +1,25 @@
 # Rapid Roll
-> A classic game, get ideas from Rapid Roll game of Nokia, using C++ and SDL2
+> A classic game, get ideas from Rapid Roll of Nokia, using C++ and SDL2
 ## How to play
-    You can control the ball by hit <- or -> button.
-    Try to keep ball out of thorn.
-    Else you lose.
+    Control the ball use <- or -> button.
+    Try to keep ball in safeboard.
+    If ball fall out screen or touch thorn, you lose.
+    Try to get highest score.
 ## Why I make this game
-    I just want to play some old game that i used to when i was a child, so i choose this game
+    I just want to play an old but classic game, so i choose this game.
 ## What we have in this game
-    * Of course, we have a ball, which can be controled using <- or ->
-    * Some boards that safe for our ball
-    * Some boards have thorn that our ball can't reach if you don't want to lose
+    * A ball, which can be controled using <- or ->.
+    * Some safeboards.
+    * Some boards have thorn so ball can't touch it.
+    * Score
+    * Music
+    * Button
+## Some suggest to improve this game
+    * Part of thorn can fall down to make game harder.
+    * Add life of ball.
+    * Player can choose which ball they want to play.
+    * Player can choose background.
 ---
-It is all about my game, this is my first time so this program can have some problems, but hope you enjoy it, thank you. 
+It is all about my game.
+This is my first time so this game probably have bug or mistake.However hope you enjoy.
+Thank you.

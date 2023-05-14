@@ -20,3 +20,24 @@ void backGround::render()
 
     SDL_RenderCopy(renderer, backGroundTexture, &srcRect, &desRect);
 }
+
+void backGround::drawFence()
+{
+    int st = 0;
+	while (st < WIDTH) {
+		drawTranigle(st, 40, true);
+		st += thornSixe;
+	}
+}
+
+void backGround::drawTranigle(int st_, int edgePos_, bool flag_)
+{
+    int detY = (flag_ == true) ? 1 : -1;
+	int st = st_, ed = st + thornSixe;
+	while (st <= ed) {
+		SDL_RenderDrawLine(renderer, st, edgePos_, ed, edgePos_);
+		SDL_RenderDrawLine(renderer, st, edgePos_ + 1, ed, edgePos_ + 1);
+		edgePos_ += detY * 2;
+		st++, ed--;
+	}
+}

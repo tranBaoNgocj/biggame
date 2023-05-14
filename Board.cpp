@@ -5,10 +5,30 @@ board::board(SDL_Renderer* ren,int x, int y)
 {
     renderer = ren;
     kindOfBoard = rand()%5;
-    if(kindOfBoard)
-    boardTexture = textureManager::LoadTexture(safeBoardName,ren);
-    else
-    boardTexture = textureManager::LoadTexture(dangerBoardName,ren);
+    switch (kindOfBoard)
+    {
+        case 1:
+            boardTexture=textureManager::LoadTexture("draw/safe1.png",ren);
+            break;
+        case 2:
+            boardTexture=textureManager::LoadTexture("draw/safe2.png",ren);
+            break;
+        case 3:
+            boardTexture=textureManager::LoadTexture("draw/safe3.png",ren);
+            break;
+        case 4:
+            boardTexture=textureManager::LoadTexture("draw/safe4.png",ren);
+            break;
+        // case 5:
+        //     boardTexture=textureManager::LoadTexture("draw/safe.png",ren);
+        //     break;
+        // case 6:
+        //     boardTexture=textureManager::LoadTexture("draw/safe10.png",ren);
+        //     break;
+        default:
+            boardTexture = textureManager::LoadTexture(dangerBoardName,ren);
+            break;
+    }
     xpos = x;
     ypos =y;
 }
@@ -17,15 +37,15 @@ board::board(SDL_Renderer* ren,int x, int y)
 void board::Update()
 {
         ypos -- ;
-        srcRect.h = BOARD_HEIGHT;
-        srcRect.w = BOARD_WIDTH;
+        srcRect.h = 53;
+        srcRect.w = 247;
         srcRect.x = 0;
         srcRect.y = 0;
 
         desRect.x = xpos;
         desRect.y = ypos;
-        desRect.w = srcRect.w;
-        desRect.h = srcRect.h;
+        desRect.w = BOARD_WIDTH;
+        desRect.h = BOARD_HEIGHT;
 }
 
 //draw board
