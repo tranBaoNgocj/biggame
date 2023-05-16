@@ -7,7 +7,7 @@ vector <board> barManager;
 Ltexture  *gTextTexture;
 backGround *background;
 button *playButton;
-//The music that will be played
+button *musicButton;
 Mix_Music *gMusic = NULL;
 
 void Game::init(const char* title, int xpos, int ypos, int width, int height, bool fullscreen)
@@ -59,15 +59,15 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 				}
         
     }
-
-    
     isQuit = false;
+
     balls = new ball(renderer,WIDTH/2,GAME_START_POSITION-BALL_SIZE);
-
+    CreatStartBar (barManager,renderer);
     background = new backGround(backgroundName,renderer);
+    scorer = "Rapid Roll";
 
-    playButton = new button(renderer, "draw/Play.png", 150, 350);
-    // rePlayButton = new button(renderer, "draw/RePlay.png", 100,100);
+    playButton = new button(renderer, "draw/Play.png", 150, 300);
+    musicButton = new button(renderer, "draw/Music.png", 150,400);
 
     gTextTexture = new Ltexture;
 
@@ -77,8 +77,6 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	{
 		std::cout<< "Failed to load beat music!"<<std::endl;
 	}
-
-    CreatStartBar (barManager,renderer);
 
     isStarted = false;
 }
@@ -109,21 +107,61 @@ void Game::handleEvents()
             break;
         default:
                 playButton->HandleMouseEvent(&event);
-                if(playButton->mCurrentSprite == BUTTON_SPRITE_MOUSE_DOWN) 
-                    isStarted = true;
+                musicButton->HandleMouseEvent(&event);
                 cnt = 0;
                 break;
     }
 }
 
+void Game::handleButton()
+{
+    //play
+    if(playButton->mCurrentSprite == BUTTON_SPRITE_MOUSE_DOWN) 
+    {
+        //clear game
+        barManager.clear();
+        balls = NULL;
+
+        // reset game
+        balls = new ball(renderer,WIDTH/2,GAME_START_POSITION-BALL_SIZE);
+        playButton = new button(renderer, "draw/Replay.png", 150, 300);
+
+        CreatStartBar(barManager,renderer);
+        FPS = 60;
+        score =0;    
+        isStarted = true;
+    }
+
+    // music button
+    if(musicButton->mCurrentSprite==BUTTON_SPRITE_MOUSE_DOWN)
+    {
+        if( Mix_PlayingMusic() == 0 )
+            {
+                //Play the music
+                Mix_PlayMusic( gMusic, -1 );
+            }
+        //If music is being played
+            else
+            {
+                //If the music is paused
+                if( Mix_PausedMusic() == 1 )
+                {
+                    //Resume the music
+                    Mix_ResumeMusic();
+                }
+                //If the music is playing
+                else
+                {
+                    //Pause the music
+                    Mix_PauseMusic();
+                }
+			}
+    }    
+}
 
 void Game::update()
 {
-    if( Mix_PlayingMusic() == 0 )
-        {
-            //Play the music
-            Mix_PlayMusic( gMusic, -1 );
-        }
+    handleButton();
 
     if(isStarted)
     {
@@ -137,37 +175,31 @@ void Game::update()
     if(!balls->isRunning())
     {
         isStarted = false;
-        //clear game
-        barManager.clear();
-        balls = NULL;
-
-        // reset game
-        balls = new ball(renderer,WIDTH/2,GAME_START_POSITION-BALL_SIZE);
-        playButton = new button(renderer, "draw/Replay.png", 150, 350);
-        CreatStartBar(barManager,renderer);
-        FPS = 60;
-        score =0;
+        scorer = "score: " +std::to_string(score/50);
     }
 }
 
 void Game::render()
 {
-    SDL_Color textColor = { 0, 0, 0 };
+    SDL_Color textColor = { 0,0,0 };
     SDL_RenderClear(renderer);
     
     if(isStarted)
     {
         SDL_RenderClear(renderer);
+
         background->render();
         background->drawFence();
         RenDer(barManager);
         balls->Render();
 
-        std::string s = "score: " + std::to_string(score/50);
+        //render score
+        string s = "score: " + std::to_string(score/50);
         if( !gTextTexture->loadFromRenderedText(renderer,font,s,textColor))
         {
             std::cout<< "Failed to render text texture!\n"<<std::endl;
         }
+
         gTextTexture->render(250,SCORE_HEIGHT_POSITION,renderer,SCORE_WIDTH,SCORE_HEIGHT);
     }
 
@@ -175,23 +207,20 @@ void Game::render()
     {
         SDL_SetRenderDrawColor( renderer, 0xFF, 0xFF, 0xFF, 0xFF );
         SDL_RenderClear( renderer );
-        if( !gTextTexture->loadFromRenderedText(renderer,font,"Rapid RoLL",textColor))
+
+        //score
+        if( !gTextTexture->loadFromRenderedText(renderer,font,scorer,textColor))
         {
             std::cout<< "Failed to render text texture!\n"<<std::endl;
         }
+
         //Render current frame
 
-
         background->render();
-        gTextTexture->render( 25, 200,renderer);
+        gTextTexture->render( 30, 200,renderer);
         playButton->Render();
+        musicButton->Render();
     }
-
-    // if(!balls->isRunning())
-    // {
-    //     SDL_RenderClear (renderer);
-    //     rePlayButton->Render();
-    // }
 
     SDL_RenderPresent(renderer);
 }

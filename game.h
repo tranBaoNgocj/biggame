@@ -9,6 +9,8 @@
 #include "background.h"
 #include "Button.h"
 
+using std::string;
+
 class Game {
     private:
         bool isQuit;
@@ -20,11 +22,13 @@ class Game {
         Game();
         void init (const char* title, int xpos, int ypos, int width,int height, bool fullscreen);
         void handleEvents();
+        void handleButton();
         void update();
         void render();
         void clean();
         int cnt;
         float FPS = 60;
         long long score =0;
+        string scorer;
         bool running(){return isQuit;};
 };
